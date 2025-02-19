@@ -94,6 +94,8 @@ title: Sentry 核心价值
 image: https://images.unsplash.com/photo-1526498460520-4c246339dccb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 ---
 
+## Sentry 核心价值
+
 <v-clicks>
 
 *   **跨平台监控:** Web / App / Server
@@ -124,7 +126,7 @@ Note:
 - 性能监控：
   - 除了错误，还能监控性能指标
   - 页面加载速度、接口响应时间等
-  - 帮助我们提前发现性能瓶颈
+  - 可以帮助我提前发现性能瓶颈
 
 - 技术栈集成：
   - 主流框架都有官方 SDK
@@ -220,19 +222,18 @@ try {
 
 <!--
 Note:
-1. 在Sentry中，一个基本的连接只需要安装一个sdk，然后调用初始化 init 方法, 并配置sdn即可
+1. 在Sentry中，一个基本的连接只需要安装sdk，调用初始化 init 方法即可，这里的dsn即项目创建时的dsn
 
-2. 但是，如果想要开启监控，则需要引入集成，比如基本的Tracing功能，错误跟踪。这里是浏览器端，所以是BrowserTracing
+2. 接下来，我们想要开启监控，则需要引入集成 integrations。比如基本的Tracing ，也就是错误跟踪功能。这里是浏览器端，所以是BrowserTracing
 
-3. 比如：Replay：重现功能，可以辅助重现用户的操作
+3. 再比如：Replay：重现功能，可以辅助重现用户的操作
 
-4. environment: 你可以指定环境信息，从而区分开发环境、测试环境和生产环境
+4. 在开发和测试时，有时候需要区分环境，那么你可以指定环境信息environment，从而区分开发环境、测试环境和生产环境
 
 5. 最后，还可以指定版本信息，便于问题跟进
 
-6. 接入之后，可以用一个简单的用例，测试以下集成的情况
+6. 接入之后，可以用一个简单的用例，测试一下集成的情况
 -->
-
 
 ---
 layout: default
@@ -259,59 +260,11 @@ func main() {
 }
 ```
 
----
-layout: center
-class: slide-content
-title: 团队协作工作流 - 示例
----
-
-```mermaid {theme: 'neutral', scale: 0.6}
-graph TD
-    A[错误触发] --> B{Sentry项目}
-    B --> C1[归档 → 后续关注]
-    B --> C2[合并 → 分类合并]
-    C1 --> D[分配负责人+添加标签]
-    C2 --> D
-    D --> E[开发修复+提交关联commit]
-    E --> F[测试验证+标记状态]
-    F --> G[复盘高频问题]
-```
-
-<!--
-接下来，演示一个示例，说明一下错误处理的流程
-
- [打开Sentry](https://sentry.afuav.com)
-
-
-Sentry收集异常之后，我们能够在对应项目中看到近期的异常。
-
-Sentry对异常初步做了分类，如TypeError, UnhandledRejection，根据平台略有不同.
-
-我们可以对异常进行归档，或者合并，以便于后续的处理。
-
-接下来，将对应的异常分配对应的负责人，进行后续的开发修复操作，在修复完成之后，进行测试验证，标记状态。
-
-可以在 issues 详情--> 分配按钮 --> 设置，配置规则，自动分配负责人或者团队
-
-最后，我们可以对高频问题进行复盘，分析问题的原因，优化解决方案。
-
--->
 
 ---
 layout: default
 class: slide-content
-title: 协作工具整合 - 示例
----
-
-*   错误自动同步到 [飞书](https://juejin.cn/post/7143142055294795807)
-*   使用 Sentry 评论功能进行技术讨论
-*   通过 `#fingerprint` 手动合并相似问题
-*   配置每日自动报表发送到团队群组
-
----
-layout: default
-class: slide-content
-title: 最佳实践
+title: 异常监控最佳实践
 ---
 
 *   **环境隔离:** 区分 `production` / `staging` / `development`
@@ -328,28 +281,194 @@ title: 最佳实践
 *   **性能监控:** 接口耗时 / 页面加载 / FCP 等核心指标
 *   **告警策略:** 按错误量 / 影响用户数 / 崩溃率设置阈值
 
----
-layout: default
-class: slide-content
-title: 效果衡量指标 - 举例
----
-
-*   生产环境崩溃率下降目标 (< 0.1%)
-*   错误响应平均时间 (MTTA < 2小时)
-*   问题解决周期 (MTTR < 8小时)
-*   关键路径错误检测率 (100%覆盖)
 
 ---
-layout: default
-class: slide-content
-title: 针对不同角色的价值点
+title: 团队协作工作流 - 错误触发
+layout: center
 ---
+
+<div class="absolute top-10 left-10"><h2>团队协作工作流</h2></div>
+
+```mermaid {theme: 'neutral', scale: 0.6}
+graph TD
+    A[错误触发]
+```
+
+<!-- 
+Note:
+错误触发：首先，错误可能来自用户的实际操作，也可能是系统自动检测到的异常，比如页面崩溃或API超时等。
+ -->
+
+---
+layout: center
+class: slide-content
+title: 团队协作工作流 - 错误上传
+---
+
+<div class="absolute top-10 left-10"><h2>团队协作工作流</h2></div>
+```mermaid {theme: 'neutral', scale: 0.6}
+graph TD
+    A[错误触发] --> B{Sentry项目}
+```
+
+<!-- 
+Note:
+错误上传：当错误发生后，Sentry SDK 会自动将这些错误信息上传到我们的 Sentry 平台。这个过程是实时的，通常在几秒内就能收到告警，包含了完整的错误上下文信息。
+ -->
+
+---
+layout: center
+class: slide-content
+title: 团队协作工作流 - 错误分类
+---
+
+<div class="absolute top-10 left-10"><h2>团队协作工作流</h2></div>
+```mermaid {theme: 'neutral', scale: 0.6}
+graph TD
+    A[错误触发] --> B{Sentry项目}
+    B --> C1[归档 → 后续关注]
+    B --> C2[合并 → 分类合并]
+```
+
+<!-- 
+Note:
+错误分类：错误进入系统后，我们需要进行初步分类。对于暂时不急需处理的问题，可以先归档；而对于重复出现的相似问题，我们可以合并处理，提高效率。
+ -->
+
+---
+layout: center
+class: slide-content
+title: 团队协作工作流 - 分配处理
+---
+
+<div class="absolute top-10 left-10"><h2>团队协作工作流</h2></div>
+```mermaid {theme: 'neutral', scale: 0.6}
+graph TD
+    A[错误触发] --> B{Sentry项目}
+    B --> C1[归档 → 后续关注]
+    B --> C2[合并 → 分类合并]
+    C1 --> D[分配负责人+添加标签]
+    C2 --> D
+```
+
+<!-- 
+Note:
+分配处理：分类后，我们会给问题分配负责人和标签。比如前端问题分给前端团队，API错误分给后端团队。这里可以配置自动分配规则，提高效率。
+ -->
+
+---
+layout: center
+class: slide-content
+title: 团队协作工作流 - 开发修复
+---
+
+<div class="absolute top-10 left-10"><h2>团队协作工作流</h2></div>
+```mermaid {theme: 'neutral', scale: 0.6}
+graph TD
+    A[错误触发] --> B{Sentry项目}
+    B --> C1[归档 → 后续关注]
+    B --> C2[合并 → 分类合并]
+    C1 --> D[分配负责人+添加标签]
+    C2 --> D
+    D --> E[开发修复+提交关联commit]
+```
+
+<!-- 
+Note:
+开发修复：负责人接到任务后，就开始进行问题修复。修复时要关联对应的 commit，这样可以方便后续追踪和回溯问题。
+ -->
+
+---
+layout: center
+class: slide-content
+title: 团队协作工作流 - 测试验证
+---
+
+<div class="absolute top-10 left-10"><h2>团队协作工作流</h2></div>
+```mermaid {theme: 'neutral', scale: 0.6}
+graph TD
+    A[错误触发] --> B{Sentry项目}
+    B --> C1[归档 → 后续关注]
+    B --> C2[合并 → 分类合并]
+    C1 --> D[分配负责人+添加标签]
+    C2 --> D
+    D --> E[开发修复+提交关联commit]
+    E --> F[测试验证+标记状态]
+```
+
+<!-- 
+Note:
+测试验证：修复完成后，需要测试团队进行验证。验证通过后，我们会更新问题状态，确保问题被彻底解决。
+ -->
+
+---
+layout: center
+class: slide-content
+title: 团队协作工作流 - 复盘总结
+---
+
+<div class="absolute top-10 left-10"><h2>团队协作工作流</h2></div>
+```mermaid {theme: 'neutral', scale: 0.6}
+graph TD
+    A[错误触发] --> B{Sentry项目}
+    B --> C1[归档 → 后续关注]
+    B --> C2[合并 → 分类合并]
+    C1 --> D[分配负责人+添加标签]
+    C2 --> D
+    D --> E[开发修复+提交关联commit]
+    E --> F[测试验证+标记状态]
+    F --> G[复盘高频问题]
+```
+
+<!-- 
+Note:
+复盘总结：最后是复盘环节。我们会定期分析高频问题，找出共性问题，制定系统性的解决方案，持续优化我们的代码质量。
+ -->
+
+
+---
+layout: default
+title: 对于不同角色的价值点
+---
+
+<div class="absolute top-10 left-10"><h2>价值: 不同角色</h2></div>
 
 *   **测试工程师:** 直接获取复现步骤 / 设备信息
 *   **后端工程师:** 查看完整请求参数 / 数据库查询
 *   **客户端工程师:** 获取设备内存 / CPU 状态快照
 *   **算法工程师:** 监控模型输入输出异常值
 *   **技术负责人:** 通过 Trends 分析技术债务分布
+
+---
+layout: default
+class: slide-content
+title: 效果衡量指标 - 举例
+---
+
+<div class="absolute top-10 left-10"><h2>展望: BUG立减百分百</h2></div>
+
+*   生产环境崩溃率下降目标 (< 0.1%)
+*   错误响应平均时间 (MTTA < 2小时)
+*   问题解决周期 (MTTR < 8小时)
+*   关键路径错误检测率 (100%覆盖)
+
+
+---
+layout: center
+title: 协作工具整合 - 示例
+---
+
+<div class="absolute top-10 left-10"><h2>展望：协作工具整合</h2></div>
+
+<v-clicks>
+
+*   错误自动同步到 [飞书](https://juejin.cn/post/7143142055294795807)
+*   使用 Sentry 评论功能进行技术讨论
+*   通过 `#fingerprint` 手动合并相似问题
+*   配置每日自动报表发送到团队群组
+
+</v-clicks>
+
 
 ---
 layout: default
@@ -371,22 +490,6 @@ title: 问答与后续计划
 *   欢迎提问！
 
 ```
-
-**说明：**
-
-*   **结构:** 按照您的框架进行组织。
-*   **代码示例:**  完整保留，并添加了代码高亮。
-*   **Mermaid 图:**  保留 Mermaid 图表。
-*   **表格:**  使用 Markdown 表格语法。
-*   **样式:**  增加了一些简单的样式，你可以根据需要进行修改。
-
-**使用方法：**
-
-1.  安装 Node.js 和 npm/yarn。
-2.  全局安装 Slidev:  `npm install -g @slidev/cli` 或 `yarn global add @slidev/cli`。
-3.  将以上 Markdown 内容保存为 `presentation.md` 文件。
-4.  在命令行中运行 `slidev presentation.md`。
-5.  Slidev 会启动一个本地服务器，在浏览器中打开 PPT。
 
 **建议：**
 
