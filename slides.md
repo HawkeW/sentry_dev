@@ -81,11 +81,10 @@ layout: default
 title: 目录
 ---
 
-- Sentry 核心价值 (5分钟)
-- 全栈集成演示 (5分钟)
-- 团队协作工作流 (10分钟)
-- 最佳实践 (10分钟)
-- 问答与后续计划 (5分钟)
+- Sentry 核心价值 
+- 集成演示
+- 最佳实践
+- 团队协作工作流
 
 ---
 layout: intro-image-right
@@ -238,8 +237,35 @@ Note:
 ---
 layout: default
 class: slide-content
+title: 集成演示
+---
+
+```ts {monaco}
+import * as Sentry from "@sentry/vue";
+Sentry.init({
+  dsn: "",
+  integrations: [
+    new Sentry.BrowserTracing(),
+    new Sentry.Replay(), // 重现功能
+  ],
+  tracesSampleRate: 0.2,
+  environment: 'production', // 环境信息
+  release: "my-project@1.0.0" // 版本信息
+});
+try {
+  riskyOperation();
+} catch (e) {
+  Sentry.captureException(e);
+}
+```
+
+
+---
+layout: default
+class: slide-content
 title: 全栈集成演示
 ---
+
 ### 后端示例 (Golang)
 
 ```go
@@ -281,6 +307,14 @@ title: 异常监控最佳实践
 *   **性能监控:** 接口耗时 / 页面加载 / FCP 等核心指标
 *   **告警策略:** 按错误量 / 影响用户数 / 崩溃率设置阈值
 
+
+---
+title: 团队协作工作流
+layout: intro-image
+image: ./assets/cooperate.jpg
+---
+
+<div v-click class="absolute right-30 bottom-20"><h2>团队协作工作流</h2></div>
 
 ---
 title: 团队协作工作流 - 错误触发
@@ -427,7 +461,7 @@ Note:
 
 
 ---
-layout: default
+layout: center
 title: 对于不同角色的价值点
 ---
 
@@ -440,26 +474,35 @@ title: 对于不同角色的价值点
 *   **技术负责人:** 通过 Trends 分析技术债务分布
 
 ---
-layout: default
-class: slide-content
+layout: image-left
 title: 效果衡量指标 - 举例
+image: ./assets/no-errors.png
 ---
 
-<div class="absolute top-10 left-10"><h2>展望: BUG立减百分百</h2></div>
+<div class="absolute top-10 left-[55%]"><h2>展望: BUG立减百分百</h2></div>
+
+<div class="absolute top-40 left-[55%]">
+
+<v-clicks>
 
 *   生产环境崩溃率下降目标 (< 0.1%)
 *   错误响应平均时间 (MTTA < 2小时)
 *   问题解决周期 (MTTR < 8小时)
 *   关键路径错误检测率 (100%覆盖)
 
+</v-clicks>
+
+</div>
 
 ---
-layout: center
+layout: image-right
 title: 协作工具整合 - 示例
+image: ./assets/integration.jpg
 ---
 
 <div class="absolute top-10 left-10"><h2>展望：协作工具整合</h2></div>
 
+<div class="absolute top-30 left-10">
 <v-clicks>
 
 *   错误自动同步到 [飞书](https://juejin.cn/post/7143142055294795807)
@@ -468,18 +511,20 @@ title: 协作工具整合 - 示例
 *   配置每日自动报表发送到团队群组
 
 </v-clicks>
+</div>
+
 
 
 ---
-layout: default
+layout: center
 class: slide-content
 title: 分享后提供
 ---
 
-*   各平台标准配置文档
-*   团队 Sentry 权限矩阵
-*   紧急问题处理 SOP
-*   错误分类决策树图表
+*   [文档：各平台标准配置](https://docs.sentry.io/platforms)
+*   [文档：关联release & commit](https://docs.sentry.io/product/releases/associate-commits/)
+*   紧急问题处理 SOP 
+*   错误分类决策树
 
 ---
 layout: default
@@ -489,13 +534,19 @@ title: 问答与后续计划
 
 *   欢迎提问！
 
+希望这个 PPT 对你有所帮助！
+
 ```
 
-**建议：**
 
-*   在分享之前，务必将代码示例中的 `your_dsn` 替换成你自己的 Sentry DSN。
-*   根据团队的实际情况，调整问题分类标准和响应时效。
-*   分享时可以结合实际案例，让大家更好地理解 Sentry 的价值。
-*   鼓励大家积极参与讨论，提出问题和建议。
 
-希望这个 PPT 对你有所帮助！
+
+---
+layout: end
+title: 分享后提供
+---
+
+*   [文档：各平台标准配置](https://docs.sentry.io/platforms)
+*   [文档：关联release & commit](https://docs.sentry.io/product/releases/associate-commits/)
+*   [紧急问题处理 SOP] (./assets/emergency-sop-slides.md)
+*   [错误分类决策树](./assets/error-cates.md)
