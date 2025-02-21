@@ -516,17 +516,6 @@ image: ./assets/integration.jpg
 
 
 ---
-layout: center
-class: slide-content
-title: 分享后提供
----
-
-*   [文档：各平台标准配置](https://docs.sentry.io/platforms)
-*   [文档：关联release & commit](https://docs.sentry.io/product/releases/associate-commits/)
-*   紧急问题处理 SOP 
-*   错误分类决策树
-
----
 layout: default
 class: slide-content
 title: 问答与后续计划
@@ -548,5 +537,5 @@ title: 分享后提供
 
 *   [文档：各平台标准配置](https://docs.sentry.io/platforms)
 *   [文档：关联release & commit](https://docs.sentry.io/product/releases/associate-commits/)
-*   [紧急问题处理 SOP] (./assets/emergency-sop-slides.md)
+*   [紧急问题处理 SOP](./assets/emergency-sop-slides.md)
 *   [错误分类决策树](./assets/error-cates.md)
