@@ -8,6 +8,7 @@ const props = defineProps({
 })
 
 const counter = ref(props.count)
+
 </script>
 
 <template>
@@ -31,7 +32,7 @@ const counter = ref(props.count)
       hover:bg="gray-400 opacity-20"
       @click="counter += 1"
     >
-      +
+      Bug!!
     </button>
   </div>
 </template>

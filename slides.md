@@ -159,7 +159,7 @@ Sentry.init({
 });
 ```
 
-```ts {6}
+```ts {6|9-10}
 import * as Sentry from "@sentry/vue";
 Sentry.init({
   dsn: "your_dsn",
@@ -168,6 +168,8 @@ Sentry.init({
     new Sentry.Replay(), // 重现功能
   ],
   tracesSampleRate: 0.2,
+  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
 });
 
 ```
@@ -237,32 +239,6 @@ Note:
 ---
 layout: default
 class: slide-content
-title: 集成演示
----
-
-```ts {monaco}
-import * as Sentry from "@sentry/vue";
-Sentry.init({
-  dsn: "",
-  integrations: [
-    new Sentry.BrowserTracing(),
-    new Sentry.Replay(), // 重现功能
-  ],
-  tracesSampleRate: 0.2,
-  environment: 'production', // 环境信息
-  release: "my-project@1.0.0" // 版本信息
-});
-try {
-  riskyOperation();
-} catch (e) {
-  Sentry.captureException(e);
-}
-```
-
-
----
-layout: default
-class: slide-content
 title: 全栈集成演示
 ---
 
@@ -286,12 +262,55 @@ func main() {
 }
 ```
 
+---
+layout: default
+class: slide-content
+title: 集成演示
+monacoTypesAdditionalPackages:
+  - @sentry/browser
+---
+
+```ts {monaco-run}   {autorun:false}
+import * as Sentry from "@sentry/browser";
+Sentry.init({
+  dsn: "",
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(), // 重现功能
+  ],
+  tracesSampleRate: 0.2,
+  environment: 'production', // 环境信息
+  release: "my-project@1.0.0", // 版本信息
+  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+});
+try {
+  riskyOperation();
+} catch (e) {
+  Sentry.captureException(e);
+}
+```
+
+<!--
+Note:
+1. 接下来做一个基本的接入和操作演示。首先找到sentry的项目
+
+2. 选择合适的sdk
+
+3. 复制指导代码，注意不要删掉报错代码
+
+4. 运行代码，去sentry后台查看效果
+-->
 
 ---
 layout: default
 class: slide-content
 title: 异常监控最佳实践
 ---
+
+# 异常监控最佳实践
+
+<v-clicks>
 
 *   **环境隔离:** 区分 `production` / `staging` / `development`
 *   **敏感信息过滤:** 配置 `dataScrubber` 过滤 token / 身份证等
@@ -303,10 +322,11 @@ title: 异常监控最佳实践
       amount: 99.99
     });
     ```
-*   **版本追踪:** 关联 git commit 自动生成 release
+*   **版本追踪:** 关联 git commit & release
 *   **性能监控:** 接口耗时 / 页面加载 / FCP 等核心指标
 *   **告警策略:** 按错误量 / 影响用户数 / 崩溃率设置阈值
 
+</v-clicks>
 
 ---
 title: 团队协作工作流
@@ -314,7 +334,7 @@ layout: intro-image
 image: ./assets/cooperate.jpg
 ---
 
-<div v-click class="absolute right-30 bottom-20"><h2>团队协作工作流</h2></div>
+<div v-click class="absolute left-20 top-30" style="color: rgb(0,111,174); "><h2 style="font-size: 46px;">团队协作工作流</h2></div>
 
 ---
 title: 团队协作工作流 - 错误触发
@@ -350,6 +370,7 @@ Note:
 错误上传：当错误发生后，Sentry SDK 会自动将这些错误信息上传到我们的 Sentry 平台。这个过程是实时的，通常在几秒内就能收到告警，包含了完整的错误上下文信息。
  -->
 
+
 ---
 layout: center
 class: slide-content
@@ -362,6 +383,7 @@ graph TD
     A[错误触发] --> B{Sentry项目}
     B --> C1[归档 → 后续关注]
     B --> C2[合并 → 分类合并]
+    B --> C3[标记 → 处理优先级]
 ```
 
 <!-- 
@@ -381,8 +403,10 @@ graph TD
     A[错误触发] --> B{Sentry项目}
     B --> C1[归档 → 后续关注]
     B --> C2[合并 → 分类合并]
+    B --> C3[标记 → 处理优先级]
     C1 --> D[分配负责人+添加标签]
     C2 --> D
+    C3 --> D
 ```
 
 <!-- 
@@ -402,8 +426,10 @@ graph TD
     A[错误触发] --> B{Sentry项目}
     B --> C1[归档 → 后续关注]
     B --> C2[合并 → 分类合并]
+    B --> C3[标记 → 处理优先级]
     C1 --> D[分配负责人+添加标签]
     C2 --> D
+    C3 --> D
     D --> E[开发修复+提交关联commit]
 ```
 
@@ -424,8 +450,10 @@ graph TD
     A[错误触发] --> B{Sentry项目}
     B --> C1[归档 → 后续关注]
     B --> C2[合并 → 分类合并]
+    B --> C3[标记 → 处理优先级]
     C1 --> D[分配负责人+添加标签]
     C2 --> D
+    C3 --> D
     D --> E[开发修复+提交关联commit]
     E --> F[测试验证+标记状态]
 ```
@@ -447,8 +475,10 @@ graph TD
     A[错误触发] --> B{Sentry项目}
     B --> C1[归档 → 后续关注]
     B --> C2[合并 → 分类合并]
+    B --> C3[标记 → 处理优先级]
     C1 --> D[分配负责人+添加标签]
     C2 --> D
+    C3 --> D
     D --> E[开发修复+提交关联commit]
     E --> F[测试验证+标记状态]
     F --> G[复盘高频问题]
@@ -476,10 +506,19 @@ title: 对于不同角色的价值点
 ---
 layout: image-left
 title: 效果衡量指标 - 举例
-image: ./assets/no-errors.png
+image: /no-errors.png
 ---
 
 <div class="absolute top-10 left-[55%]"><h2>展望: BUG立减百分百</h2></div>
+
+
+---
+layout: image-left
+title: 效果衡量指标 - 举例
+image: /no-errors.png
+---
+
+<div class="absolute top-10 left-[55%]"><h2>展望: BUG立减<span style="color: rgb(0,111,174);text-decoration: line-through;">百分百</span></h2></div>
 
 <div class="absolute top-40 left-[55%]">
 
@@ -497,7 +536,7 @@ image: ./assets/no-errors.png
 ---
 layout: image-right
 title: 协作工具整合 - 示例
-image: ./assets/integration.jpg
+image: /integration.jpg
 ---
 
 <div class="absolute top-10 left-10"><h2>展望：协作工具整合</h2></div>
@@ -505,12 +544,13 @@ image: ./assets/integration.jpg
 <div class="absolute top-30 left-10">
 <v-clicks>
 
-*   错误自动同步到 [飞书](https://juejin.cn/post/7143142055294795807)
-*   使用 Sentry 评论功能进行技术讨论
-*   通过 `#fingerprint` 手动合并相似问题
-*   配置每日自动报表发送到团队群组
+*   [飞书](https://juejin.cn/post/7143142055294795807)错误自动同步，自动报表
+*   使用[ Sentry 评论](https://sentry.afuav.com/organizations/appdev/issues/37/activity/?project=2&referrer=project-issue-stream)功能进行技术讨论
+*   通过 [Fingerprint/Stack Trace Rules](https://sentry.afuav.com/settings/appdev/projects/3dmonitor/issue-grouping/) 手动合并相似问题
+*   [Sentry Alert](https://sentry.afuav.com/organizations/appdev/alerts/rules/)配置邮件推送
 
 </v-clicks>
+
 </div>
 
 
@@ -537,5 +577,5 @@ title: 分享后提供
 
 *   [文档：各平台标准配置](https://docs.sentry.io/platforms)
 *   [文档：关联release & commit](https://docs.sentry.io/product/releases/associate-commits/)
-*   [紧急问题处理 SOP](./assets/emergency-sop-slides.md)
-*   [错误分类决策树](./assets/error-cates.md)
+*   [紧急问题处理 SOP](./emergency-sop-slides.md)
+*   [错误分类决策树](./error-cates.md)
